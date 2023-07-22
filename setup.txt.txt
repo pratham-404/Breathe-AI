@@ -1,0 +1,7 @@
+cd client 
+yarn install
+
+cd server
+python -m venv ./venv
+venv/Scripts/activate
+pip install -r .\requirements.txt

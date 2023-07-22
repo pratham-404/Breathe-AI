@@ -1,3 +1,5 @@
 /server/venv
+/server/Model/dataset.zip
+/server/Model/dataset
 
 /client/node_modules
