@@ -1,41 +1,51 @@
-from fastapi import FastAPI, UploadFile, File
-import cv2
+from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware  # Import the CORS middleware
 import numpy as np
+from keras.models import load_model
+from keras.preprocessing import image
+import io
 
 app = FastAPI()
 
-def remove_background(image_path):
-    # Load the image using OpenCV
-    image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+# Load the pre-trained model and other necessary configurations
+model = load_model("./Model/Trained_CNN_Model.h5")
+labels = ["Normal", "Pneumonia"]  # Update with your class labels
 
-    # Convert the image to RGB if it has an alpha channel
-    if image.shape[2] == 4:
-        image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGB)
+# Configure CORS to allow requests from your React frontend
+app.add_middleware(
+    CORSMiddleware,
+    # Update with the URL of your React frontend
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    # Create a mask of the pixels to be transparent (remove background)
-    lower_white = np.array([200, 200, 200], dtype=np.uint8)
-    upper_white = np.array([255, 255, 255], dtype=np.uint8)
-    mask = cv2.inRange(image, lower_white, upper_white)
 
-    # Invert the mask (to keep the foreground pixels)
-    mask = cv2.bitwise_not(mask)
+@app.post("/predict/")
+async def predict_pneumonia(file: UploadFile = File(...)):
+    try:
+        # Access the file data as bytes directly from the file object
+        file_data = await file.read()
 
-    # Apply the mask to the image
-    image[mask != 0] = [0, 0, 0, 0]
+        # Process the image using the file_data as binary input
+        img = image.load_img(io.BytesIO(file_data), target_size=(224, 224))
+        img = image.img_to_array(img)
+        img = np.expand_dims(img, axis=0)
+        img = img / 255.0  # Preprocess the image
 
-    # Save the resulting image to a file (optional)
-    result_image_path = "output_image.png"
-    cv2.imwrite(result_image_path, image)
+        # Make prediction
+        prediction = model.predict(img)
+        confidence = prediction[0][0]  # Assuming it's binary classification
 
-    return result_image_path
+        # Map the confidence score to the label
+        if confidence > 0.5:
+            result = {"prediction": labels[1], "confidence": float(confidence)}
+        else:
+            result = {"prediction": labels[0],
+                      "confidence": float(1 - confidence)}
 
-@app.post("/remove_background")
-async def remove_background_api(file: UploadFile = File(...)):
-    # Save the uploaded image to a temporary file
-    with open("temp_image.png", "wb") as temp_image:
-        temp_image.write(await file.read())
-
-    # Call the remove_background function
-    output_image_path = remove_background("temp_image.png")
-
-    return {"message": "Background removed successfully", "image_path": output_image_path}
+        return JSONResponse(content=result)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
