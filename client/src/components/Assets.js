@@ -1,7 +1,5 @@
-import moon from "../assets/svg/moon.svg";
-import sun from "../assets/svg/sun.svg";
+import mainIcon from "../assets/icon.png";
 
 export const Icons = {
-	moon,
-    sun,
+    mainIcon
 };

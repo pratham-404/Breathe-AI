@@ -1,2 +1,0 @@
-make navbar responsive 
-make home page better 
