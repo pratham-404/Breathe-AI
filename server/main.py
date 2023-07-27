@@ -9,7 +9,7 @@ import io
 app = FastAPI()
 
 # Load the pre-trained model and other necessary configurations
-model = load_model("./Model/Trained_CNN_Model.h5")
+model = load_model("./Model/New_Trained_CNN_Model.h5")
 labels = ["Normal", "Pneumonia"]  # Update with your class labels
 
 # Configure CORS to allow requests from your React frontend
