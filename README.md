@@ -41,13 +41,13 @@ All results below come from the same untouched 624-image test set at a `0.5` cla
 
 | Model | Parameters | Input | Accuracy | Precision | Recall | Specificity | F1 | AUC | Loss |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Custom CNN | 423,361 | 160×160×3 | 70.7% | 68.1% | 99.7% | 22.2% | 81.0% | 89.4% | 1.0591 |
+| Custom CNN | 423,361 | 160×160×3 | 70.7% | 68.1% | **99.7%** | 22.2% | 81.0% | 89.4% | 1.0591 |
 | Efficient Separable CNN | 48,545 | 180×180×3 | 72.8% | 70.1% | 98.5% | 29.9% | 81.9% | 82.8% | 0.6986 |
-| **Deep Separable CNN** | 587,361 | 180×180×3 | **79.2%** | 75.3% | 99.2% | 45.7% | **85.6%** | **94.0%** | **0.5714** |
-| ResNet152V2 | 58,333,697 | 224×224×3 | 74.8% | **92.4%** | 65.1% | **91.0%** | 76.4% | 87.7% | 0.6058 |
-| DenseNet121 | 7,038,529 | 180×180×3 | 63.3% | 63.0% | **99.7%** | 2.6% | 77.3% | 74.2% | 0.9837 |
+| Deep Separable CNN | 587,361 | 180×180×3 | 79.2% | 75.3% | 99.2% | 45.7% | 85.6% | **94.0%** | **0.5714** |
+| ResNet152V2 | 58,333,697 | 224×224×3 | 78.8% | 74.9% | 99.5% | 44.4% | 85.5% | 90.9% | 0.8412 |
+| **DenseNet121** | 7,038,529 | 180×180×3 | **81.1%** | **76.9%** | **99.7%** | **50.0%** | **86.8%** | 91.4% | 0.7718 |
 
-Deep Separable CNN has the strongest overall accuracy, F1, AUC, and loss in this evaluation. ResNet152V2 has the highest precision and specificity. These results describe this dataset only and are not evidence of clinical performance.
+DenseNet121 has the strongest accuracy, precision, specificity, and F1 in this evaluation. Deep Separable CNN has the highest AUC and lowest loss. These results describe this dataset only and are not evidence of clinical performance.
 
 ## How it works
 
