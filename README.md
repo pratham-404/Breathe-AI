@@ -1,49 +1,130 @@
-# Pneumonia-Detection-using-CNN
+# Breathe-AI
 
-![Pneumonia Prediction using Deep CNN](https://github.com/RushilShivade/Pneumonia-Detection-using-CNN/assets/116446026/dcf919c0-8644-46dd-8c9e-84c8b00e0430)
+Breathe-AI is a research application for comparing locally trained neural networks and screening chest X-rays for `Normal` or `Pneumonia` patterns.
 
+> **Research use only:** Breathe-AI is not a medical device and must not be used for diagnosis or treatment. Always consult a qualified clinician.
 
-## Introduction
-This project aims to build a deep Convolutional Neural Network (CNN) model to detect pneumonia in individuals using chest X-ray images. Pneumonia is a serious lung infection that can be life-threatening if not diagnosed and treated promptly. This model utilizes the publicly available [Chest X-ray Images (Pneumonia)](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia) dataset from Kaggle to train and evaluate the CNN for binary classification – identifying whether a person has pneumonia or not.
+## What it provides
 
-## Dataset Description
-The dataset contains a large collection of chest X-ray images obtained from pediatric and adult patients. It is divided into three main subsets: training, validation, and test. Each subset contains two classes: "Normal" and "Pneumonia." The "Normal" class represents healthy individuals without pneumonia, while the "Pneumonia" class comprises X-ray images of patients with pneumonia. The dataset provides a valuable resource for training a robust deep learning model to perform pneumonia detection.
+- Upload and preview JPEG or PNG chest X-rays up to 10 MB.
+- Choose any locally available model for inference.
+- Compare model architectures through visual flow diagrams.
+- Compare training settings and test metrics in one table; hover a column name for its definition.
+- Verify model artifacts with SHA-256 checksums before loading them.
+- Monitor readiness, request totals, errors, and inference duration.
 
-## Model Architecture
-The deep CNN model employed for this task is built using the Keras API with a TensorFlow backend. The architecture consists of multiple Convolutional, Batch Normalization, Max Pooling, and Dropout layers, followed by Dense layers for final classification. The model is designed to extract meaningful features from chest X-ray images and make accurate predictions.
+## Quick start
 
-## Data Preprocessing and Augmentation
-Before feeding the images into the model, they are preprocessed by resizing them to a standard size (e.g., 224x224 pixels) and normalizing the pixel values to a range between 0 and 1. Data augmentation techniques, such as shear, zoom, rotation, horizontal flip, and shift, are applied to increase the diversity of the training dataset and improve model generalization.
+You need Docker and at least one trained `.keras` artifact in `server/artifacts/`.
 
-## Training and Evaluation
-The model is trained using the training dataset and evaluated on the validation set. The training process involves optimizing the model's parameters using the binary cross-entropy loss and the Adam optimizer. Early stopping and learning rate reduction callbacks are used to prevent overfitting and fine-tune the model's performance. After successful training, the model is evaluated on the test set to assess its real-world performance.
+```powershell
+docker compose up --build
+```
 
-## Model Deployment and Prediction
-Once the model is fully trained and evaluated, it can be saved as a `.h5` file for future use. The saved model can then be loaded and utilized to make predictions on new chest X-ray images. The model will provide a probability score indicating the likelihood of pneumonia presence in the image.
+Open [http://localhost:8080](http://localhost:8080), choose a model, upload a chest X-ray, and select **Analyze image**.
 
-## Dependencies
-- TensorFlow
-- Keras
-- Pandas
-- NumPy
-- Matplotlib
-- PIL (Python Imaging Library)
+Stop the application with `Ctrl+C`. Models without a local artifact remain visible for comparison but cannot be selected for inference.
 
-## Usage
-1. Download the Chest X-ray Images (Pneumonia) dataset from Kaggle and organize it into appropriate train, validation, and test folders.
-2. Preprocess the data, augment the training set, and split it into train, validation, and test DataFrames using pandas.
-3. Create the deep CNN model by defining the architecture and compiling it with appropriate loss and optimizer functions.
-4. Train the model using the training dataset and evaluate its performance on the validation set.
-5. Fine-tune the model using early stopping and learning rate reduction callbacks to prevent overfitting.
-6. Save the trained model as a `.h5` file for future use.
-7. Load the saved model and use it to predict pneumonia on new chest X-ray images.
+## GitHub Pages demo
 
-## Conclusion
-Pneumonia detection using deep CNN with chest X-ray images is a critical task with potentially life-saving applications. By leveraging the power of deep learning and large datasets, this model can assist medical professionals in making accurate and timely diagnoses, leading to better patient outcomes. However, it is essential to remember that this model is intended to be used as an assisting tool and not a replacement for professional medical judgment. Always consult a qualified healthcare professional for medical decisions and diagnosis.
+The included Pages workflow publishes the static comparison interface to:
 
-**Note**: Please refer to the Jupyter notebook or Python script accompanying this README for detailed code implementation and execution.
+**https://pratham-404.github.io/Breathe-AI/**
 
-## References
-1. Dataset: Chest X-ray Images (Pneumonia) - [Kaggle](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
-2. Keras Documentation - [Keras.io](https://keras.io/)
-3. TensorFlow Documentation - [TensorFlow.org](https://www.tensorflow.org/)
+The Pages demo includes architecture flows and verified model metrics. Image prediction is disabled there because GitHub Pages cannot run the FastAPI backend or TensorFlow models; run the Docker application for inference.
+
+After the first push, open **Repository Settings → Pages** and select **GitHub Actions** as the source. Future pushes to `main` deploy automatically, or you can run **Deploy GitHub Pages** manually from the Actions tab.
+
+## Latest model results
+
+All results below come from the same untouched 624-image test set at a `0.5` classification threshold. The catalog records each result as `verified_local_test_split`.
+
+| Model | Parameters | Input | Accuracy | Precision | Recall | Specificity | F1 | AUC | Loss |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Custom CNN | 423,361 | 160×160×3 | 70.7% | 68.1% | 99.7% | 22.2% | 81.0% | 89.4% | 1.0591 |
+| Efficient Separable CNN | 48,545 | 180×180×3 | 72.8% | 70.1% | 98.5% | 29.9% | 81.9% | 82.8% | 0.6986 |
+| **Deep Separable CNN** | 587,361 | 180×180×3 | **79.2%** | 75.3% | 99.2% | 45.7% | **85.6%** | **94.0%** | **0.5714** |
+| ResNet152V2 | 58,333,697 | 224×224×3 | 74.8% | **92.4%** | 65.1% | **91.0%** | 76.4% | 87.7% | 0.6058 |
+| DenseNet121 | 7,038,529 | 180×180×3 | 63.3% | 63.0% | **99.7%** | 2.6% | 77.3% | 74.2% | 0.9837 |
+
+Deep Separable CNN has the strongest overall accuracy, F1, AUC, and loss in this evaluation. ResNet152V2 has the highest precision and specificity. These results describe this dataset only and are not evidence of clinical performance.
+
+## How it works
+
+```text
+training notebook
+      │
+      ├── evaluates the untouched test set
+      ├── writes server/artifacts/<model>.keras
+      └── updates server/model_catalog.json
+                         │
+browser ── upload ──> FastAPI ── verifies + loads selected model
+   │                         │
+   └── architecture flows    └── Normal / Pneumonia probability
+       and comparison table
+```
+
+- `notebooks/` trains, evaluates, exports, and registers each model.
+- `server/` provides model discovery, checksum verification, preprocessing, inference, health checks, and metrics.
+- `client/` is a dependency-free HTML, CSS, and JavaScript interface served by Nginx.
+
+## Train or retrain models
+
+Use Python 3.12 or 3.13:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\pip install -r server\requirements.txt -r server\requirements-dev.txt
+```
+
+Place the dataset at:
+
+```text
+dataset/archive/chest_xray/
+├── train/
+│   ├── NORMAL/
+│   └── PNEUMONIA/
+├── val/
+│   ├── NORMAL/
+│   └── PNEUMONIA/
+└── test/
+    ├── NORMAL/
+    └── PNEUMONIA/
+```
+
+Run one notebook from top to bottom, then restart the application:
+
+1. `notebooks/01_custom_cnn.ipynb`
+2. `notebooks/02_separable_cnn.ipynb`
+3. `notebooks/03_deep_separable_cnn.ipynb`
+4. `notebooks/04_resnet152v2.ipynb`
+5. `notebooks/05_densenet121.ipynb`
+
+Each notebook uses a shared stratified 80/20 train-validation split with seed `42`; the original test directory remains untouched until final evaluation. Training several notebooks simultaneously is not recommended because they compete for the same CPU, memory, and GPU resources.
+
+Generated model files are intentionally ignored by Git. Share them through an artifact store rather than committing large binaries.
+
+## API
+
+With Docker, the browser-facing endpoints are:
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/models` | List models, metadata, metrics, and availability |
+| `POST` | `/api/predict?model=<model-id>` | Analyze one JPEG or PNG image |
+| `GET` | `/healthz` | Check application readiness |
+
+Example:
+
+```powershell
+curl.exe -X POST -F "file=@chest-xray.jpg" "http://localhost:8080/api/predict?model=deep-separable-cnn"
+```
+
+For backend development and interactive API documentation:
+
+```powershell
+cd server
+..\.venv\Scripts\python -m uvicorn main:app --reload
+```
+
+Open [http://localhost:8000/docs](http://localhost:8000/docs). The backend also exposes `/health/live`, `/health/ready`, and Prometheus-style `/metrics` endpoints.

@@ -1,43 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>Breath-AI</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Research-only pediatric chest X-ray pneumonia classifier">
+    <title>Breathe-AI</title>
+    <link rel="icon" type="image/png" href="./icon.png">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="./styles.css?v=3">
+    <script type="module" src="./app.js?v=3"></script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <header>
+      <a class="brand" href="#home" aria-label="Breathe-AI home">
+        <img src="./icon.png" alt="" width="38" height="38">
+        <span>Breathe-AI</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#home">Analyze</a>
+        <a class="nav-cta" href="#model">Compare models</a>
+      </nav>
+    </header>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <main>
+      <section id="home-view" class="view home-view" aria-labelledby="title">
+        <div class="hero">
+          <p class="eyebrow">AI-assisted screening</p>
+          <h1 id="title">Compare AI models for pneumonia screening.</h1>
+          <p class="lede">Choose one of your locally trained models, then analyze a pediatric chest X-ray.</p>
+          <div class="highlights" aria-label="Model highlights">
+            <span><b>5</b> model architectures</span>
+            <span><b>Local</b> notebook training</span>
+            <span><b>JPEG + PNG</b> up to 10 MB</span>
+          </div>
+          <p class="disclaimer"><b>Research use only.</b> Not a diagnosis or medical device. Always consult a qualified clinician.</p>
+        </div>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+        <section class="card" aria-labelledby="upload-title">
+          <div class="card-heading">
+            <div>
+              <p class="step">STEP 01</p>
+              <h2 id="upload-title">Upload an X-ray</h2>
+            </div>
+            <span class="privacy">Processed securely</span>
+          </div>
+          <form id="prediction-form">
+            <label id="dropzone" class="dropzone" for="xray">
+              <span class="drop-prompt upload-icon" aria-hidden="true">↑</span>
+              <strong class="drop-prompt">Drop an image anywhere</strong>
+              <span class="drop-prompt">or click to browse · JPEG / JPG / PNG</span>
+              <img id="preview" class="preview" alt="Selected chest X-ray preview" hidden>
+            </label>
+            <input id="xray" name="file" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+            <label class="model-picker" for="model-select">
+              Model
+              <select id="model-select" name="model" aria-describedby="model-status">
+                <option>Loading model catalog…</option>
+              </select>
+            </label>
+            <p id="model-status" class="model-status" role="status"></p>
+            <div class="file-row">
+              <p id="file-name" class="file-name" aria-live="polite">No image selected</p>
+              <button id="submit" type="submit" disabled>Analyze image <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+
+          <div id="status" class="status" role="status" aria-live="polite"></div>
+          <dl id="result" class="result" hidden>
+            <div><dt>Classification</dt><dd id="classification"></dd></div>
+            <div><dt>Pneumonia probability</dt><dd id="probability"></dd></div>
+            <div><dt>Model</dt><dd id="result-model"></dd></div>
+            <div><dt>Model version</dt><dd id="model-version"></dd></div>
+          </dl>
+        </section>
+      </section>
+
+      <section id="model-view" class="view model-view" aria-labelledby="model-title" hidden>
+        <div class="model-heading">
+          <div>
+            <p class="eyebrow">Verified local evaluation</p>
+            <h1 id="model-title">Compare all models</h1>
+          </div>
+          <p>All metrics use the same untouched 624-image test split. Hover a column name to see what it measures.</p>
+        </div>
+        <section class="architecture-section" aria-labelledby="architecture-title">
+          <h2 id="architecture-title">How the architectures differ</h2>
+          <div id="model-list" class="architecture-grid" aria-live="polite"></div>
+        </section>
+        <h2 class="comparison-title">Model comparison</h2>
+        <div class="comparison-wrap" tabindex="0" aria-label="Scrollable model metric comparison. Hover a column to learn what it means.">
+          <table id="comparison-table"></table>
+        </div>
+        <div id="metric-tooltip" class="metric-tooltip" role="tooltip" hidden></div>
+      </section>
+    </main>
   </body>
 </html>

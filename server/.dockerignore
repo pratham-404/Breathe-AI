@@ -1,0 +1,5 @@
+__pycache__/
+Model/Trained_CNN_Model.h5
+Model/detection_cnn.ipynb
+Model/samples/
+test_*.py

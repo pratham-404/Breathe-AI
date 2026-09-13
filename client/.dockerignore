@@ -1,0 +1,6 @@
+test/
+package*.json
+README.md
+src/
+yarn.lock
+tailwind.config.js

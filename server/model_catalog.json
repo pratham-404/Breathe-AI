@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "models": [
+    {
+      "id": "custom-cnn",
+      "name": "Custom CNN",
+      "notebook": "notebooks/01_custom_cnn.ipynb",
+      "architecture": "160x160 RGB; four convolution, batch-normalization and pooling blocks; global average pooling; dense sigmoid classifier",
+      "input": {
+        "size": 160,
+        "channels": 3,
+        "normalization": "scale_0_1",
+        "output": "sigmoid"
+      },
+      "parameters": 423361,
+      "training": {
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "loss": "binary_crossentropy",
+        "batch_size": 32,
+        "epochs": 30,
+        "augmentation": "flip, rotation, zoom and contrast"
+      },
+      "dataset_split": "Shared stratified 80/20 train-validation split (seed 42); original test folder remains untouched",
+      "metrics": {
+        "status": "verified_local_test_split",
+        "accuracy": 0.7067307692307693,
+        "loss": 1.0590556439408358,
+        "precision": 0.681260945709282,
+        "recall": 0.9974358974358974,
+        "f1": 0.809573361082206,
+        "specificity": 0.2222222222222222,
+        "auc": 0.8941376209259033,
+        "confusion_matrix": {
+          "tn": 52,
+          "fp": 182,
+          "fn": 1,
+          "tp": 389
+        },
+        "samples": 624,
+        "threshold": 0.5
+      },
+      "artifact": {
+        "path": "artifacts/custom-cnn.keras",
+        "version": "6057f2bf31a2",
+        "sha256": "6057f2bf31a28b687dbdbbbd81d14747f40a227f632c561889694ae4970cd99d",
+        "status": "trained_and_checksum_verified",
+        "trained_at": "2026-09-12T12:07:41.394940+00:00"
+      },
+      "limitations": [
+        "Single pediatric chest X-ray dataset; no external, subgroup, calibration or prospective validation.",
+        "Research use only; not a medical device or diagnosis."
+      ]
+    },
+    {
+      "id": "separable-cnn",
+      "name": "Efficient Separable CNN",
+      "notebook": "notebooks/02_separable_cnn.ipynb",
+      "architecture": "180x180 RGB; convolution stem; depthwise-separable blocks at 64/128/256 channels; global average pooling; sigmoid classifier",
+      "input": {
+        "size": 180,
+        "channels": 3,
+        "normalization": "scale_0_1",
+        "output": "sigmoid"
+      },
+      "parameters": 48545,
+      "training": {
+        "optimizer": "Adam",
+        "learning_rate": 0.0005,
+        "loss": "binary_crossentropy",
+        "batch_size": 32,
+        "epochs": 35,
+        "augmentation": "flip, rotation, translation and contrast"
+      },
+      "dataset_split": "Shared stratified 80/20 train-validation split (seed 42); original test folder remains untouched",
+      "metrics": {
+        "status": "verified_local_test_split",
+        "accuracy": 0.7275641025641025,
+        "loss": 0.6985626875556218,
+        "precision": 0.7007299270072993,
+        "recall": 0.9846153846153847,
+        "f1": 0.8187633262260129,
+        "specificity": 0.29914529914529914,
+        "auc": 0.8281174898147583,
+        "confusion_matrix": {
+          "tn": 70,
+          "fp": 164,
+          "fn": 6,
+          "tp": 384
+        },
+        "samples": 624,
+        "threshold": 0.5
+      },
+      "artifact": {
+        "path": "artifacts/separable-cnn.keras",
+        "version": "63e35a160032",
+        "sha256": "63e35a160032b8c6c0e7df20669552ace3c423a91522b4d06b100569e35dcc25",
+        "status": "trained_and_checksum_verified",
+        "trained_at": "2026-09-12T18:46:18.239047+00:00"
+      },
+      "limitations": [
+        "Compact convolutions trade some feature capacity for faster training and inference.",
+        "Research use only; not a medical device or diagnosis."
+      ]
+    },
+    {
+      "id": "deep-separable-cnn",
+      "name": "Deep Separable CNN",
+      "notebook": "notebooks/03_deep_separable_cnn.ipynb",
+      "architecture": "180x180 RGB; convolution stem; five residual separable-convolution stages; global average pooling; dense sigmoid classifier",
+      "input": {
+        "size": 180,
+        "channels": 3,
+        "normalization": "scale_0_1",
+        "output": "sigmoid"
+      },
+      "parameters": 587361,
+      "training": {
+        "optimizer": "Adam",
+        "learning_rate": 0.0003,
+        "loss": "binary_crossentropy",
+        "batch_size": 24,
+        "epochs": 40,
+        "augmentation": "flip, rotation, zoom and contrast",
+        "class_weight": "inverse-frequency balanced"
+      },
+      "dataset_split": "Shared stratified 80/20 train-validation split (seed 42); original test folder remains untouched",
+      "metrics": {
+        "status": "verified_local_test_split",
+        "accuracy": 0.7916666666666666,
+        "loss": 0.5714055575425692,
+        "precision": 0.7529182879377432,
+        "recall": 0.9923076923076923,
+        "f1": 0.8561946902654868,
+        "specificity": 0.45726495726495725,
+        "auc": 0.9400065541267395,
+        "confusion_matrix": {
+          "tn": 107,
+          "fp": 127,
+          "fn": 3,
+          "tp": 387
+        },
+        "samples": 624,
+        "threshold": 0.5
+      },
+      "artifact": {
+        "path": "artifacts/deep-separable-cnn.keras",
+        "version": "895be9e2f347",
+        "sha256": "895be9e2f347c24ce0152464e5bae188fc6eb88ec4da8a65c8957167d3be96c6",
+        "status": "trained_and_checksum_verified",
+        "trained_at": "2026-09-12T19:33:59.253083+00:00"
+      },
+      "limitations": [
+        "The deeper network needs more compute and may overfit without early stopping.",
+        "Research use only; not a medical device or diagnosis."
+      ]
+    },
+    {
+      "id": "resnet152v2",
+      "name": "ResNet152V2",
+      "notebook": "notebooks/04_resnet152v2.ipynb",
+      "architecture": "224x224 RGB; ResNet152V2 backbone initialized without external weights; global average pooling; dropout; sigmoid classifier",
+      "input": {
+        "size": 224,
+        "channels": 3,
+        "normalization": "scale_0_1",
+        "output": "sigmoid"
+      },
+      "parameters": 58333697,
+      "training": {
+        "optimizer": "Adam",
+        "learning_rate": 0.0001,
+        "loss": "binary_crossentropy",
+        "batch_size": 12,
+        "epochs": 35,
+        "augmentation": "flip, rotation, zoom and contrast",
+        "initial_weights": "none"
+      },
+      "dataset_split": "Shared stratified 80/20 train-validation split (seed 42); original test folder remains untouched",
+      "metrics": {
+        "status": "verified_local_test_split",
+        "accuracy": 0.7884615384615384,
+        "loss": 0.8411999007353862,
+        "precision": 0.749034749034749,
+        "recall": 0.9948717948717949,
+        "f1": 0.854625550660793,
+        "specificity": 0.4444444444444444,
+        "auc": 0.9089469313621521,
+        "confusion_matrix": {
+          "tn": 104,
+          "fp": 130,
+          "fn": 2,
+          "tp": 388
+        },
+        "samples": 624,
+        "threshold": 0.5
+      },
+      "artifact": {
+        "path": "artifacts/resnet152v2.keras",
+        "version": "80b34f071f72",
+        "sha256": "80b34f071f720db1da660c1ee44aab6700327ad28932e972b8de47647ab2d934",
+        "status": "trained_and_checksum_verified",
+        "trained_at": "2026-09-13T08:25:53.117757+00:00"
+      },
+      "limitations": [
+        "Training this large network without external weights is compute-intensive.",
+        "Research use only; not a medical device or diagnosis."
+      ]
+    },
+    {
+      "id": "densenet121",
+      "name": "DenseNet121",
+      "notebook": "notebooks/05_densenet121.ipynb",
+      "architecture": "180x180 RGB; DenseNet121 backbone initialized without external weights; global average pooling; dropout; sigmoid classifier",
+      "input": {
+        "size": 180,
+        "channels": 3,
+        "normalization": "scale_0_1",
+        "output": "sigmoid"
+      },
+      "parameters": 7038529,
+      "training": {
+        "optimizer": "Adam",
+        "learning_rate": 0.0002,
+        "loss": "binary_crossentropy",
+        "batch_size": 16,
+        "epochs": 35,
+        "augmentation": "flip, rotation, translation and zoom",
+        "initial_weights": "none"
+      },
+      "dataset_split": "Shared stratified 80/20 train-validation split (seed 42); original test folder remains untouched",
+      "metrics": {
+        "status": "verified_local_test_split",
+        "accuracy": 0.8108974358974359,
+        "loss": 0.7718244910520082,
+        "precision": 0.7687747035573123,
+        "recall": 0.9974358974358974,
+        "f1": 0.8683035714285714,
+        "specificity": 0.5,
+        "auc": 0.9144586324691772,
+        "confusion_matrix": {
+          "tn": 117,
+          "fp": 117,
+          "fn": 1,
+          "tp": 389
+        },
+        "samples": 624,
+        "threshold": 0.5
+      },
+      "artifact": {
+        "path": "artifacts/densenet121.keras",
+        "version": "b3a1c77d8998",
+        "sha256": "b3a1c77d899840144cffb4ab5b5be81cbcc72e998d5ff5111826ad642c893669",
+        "status": "trained_and_checksum_verified",
+        "trained_at": "2026-09-13T12:03:47.013840+00:00"
+      },
+      "limitations": [
+        "Training this large network without external weights is compute-intensive.",
+        "Research use only; not a medical device or diagnosis."
+      ]
+    }
+  ]
+}
